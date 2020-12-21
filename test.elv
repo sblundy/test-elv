@@ -20,12 +20,12 @@ fn print-results [results]{
     } elif (has-key $result 'name') {
       output = $result[output]
       if (has-key $result error) {
-        if (has-key $result[error][reason] content) {
-          output = [(all $output) 'Failure: '$result[error][reason][content]]
-        } elif (kind-of $result[error][reason] exception) {
-          output = [(all $output) 'Error: '$result[error]]
+        if (has-key $result[error] content) {
+          output = [(all $output) 'Failure: '$result[error][content]]
+        } elif (kind-of $result[error] exception) {
+          output = [(all $output) (all $result[error])]
         } else {
-          output = [(all $output) 'Error: '(to-string $result[error][reason])]
+          output = [(all $output) 'Error: '(to-string $result[error])]
         }
       }
       if (!= 0 (count $output)) {
