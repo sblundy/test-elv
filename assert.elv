@@ -10,6 +10,12 @@ fn not-equals [expected actual]{
   }
 }
 
+fn len [expected container]{
+  if (!= $expected (count $container)) {
+     fail 'len: expected "'(to-string $expected)'" actual "'(to-string (count $container))'"'
+  }
+}
+
 fn has-value [container value]{
   if (not (builtin:has-value $container $value)) {
      fail 'has-value: expected "'(to-string $value)'" in "'(to-string $container)'"'
@@ -36,6 +42,6 @@ fn has-key [container expected-key]{
 }
 
 fn value-equals [container key expected]{
-  if (not (builtin:has-key $container $key)) { fail 'key "'$key'" missing' }
+  if (not (builtin:has-key $container $key)) { fail 'key "'$key'" missing:'(repr $container) }
   if (builtin:not-eq $container[$key] $expected) { fail 'key "'$key'" value: expected "'$expected'" actual "'$container[$key]'"' }
 }
