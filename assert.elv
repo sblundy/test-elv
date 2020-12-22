@@ -12,7 +12,7 @@ fn not-equals [expected actual]{
 
 fn len [expected container]{
   if (!= $expected (count $container)) {
-     fail 'len: expected "'(to-string $expected)'" actual "'(to-string (count $container))'"'
+     fail 'len: expected "'(to-string $expected)'" actual "'(to-string (count $container))'":'(repr $container)
   }
 }
 
