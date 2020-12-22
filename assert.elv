@@ -45,3 +45,30 @@ fn value-equals [container key expected]{
   if (not (builtin:has-key $container $key)) { fail 'key "'$key'" missing:'(repr $container) }
   if (builtin:not-eq $container[$key] $expected) { fail 'key "'$key'" value: expected "'$expected'" actual "'$container[$key]'"' }
 }
+
+fn element-values-match [container @expected]{
+  if (!= (count $expected) (count $container)) {
+     fail 'element-values-match: expected "'(to-string $expected)'" actual "'(to-string (count $container))'":'(repr $container)
+  }
+  diffs = [(range (count $expected) | each [i]{
+    c = $container[$i]
+    e = $expected[$i]
+    value-diffs = [(keys $e | each [k]{
+      if (not (builtin:has-key $c $k)) {
+        put '    - '$e
+      } elif (builtin:not-eq $c[$k] $e[$k]) {
+        put '    !['$k']:'(repr $e[$k])' != '(repr $c[$k])
+      }
+    })]
+    if (!= 0 (count $value-diffs)) {
+      put '  ['$i']'
+      all $value-diffs
+    }
+  })]
+  if (!= 0 (count $diffs)) {
+    use str
+    lines = ['element-values-match:' (all $diffs)]
+    repr $lines >> test.log
+    fail (str:join "\n" $lines)
+  }
+}
