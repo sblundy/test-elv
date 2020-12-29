@@ -72,3 +72,16 @@ fn element-values-match [container @expected]{
     fail (str:join "\n" $lines)
   }
 }
+
+fn is-fail [actual]{
+  if (builtin:eq $ok $actual) {
+    fail 'is-fail: actual "'(to-string $actual)'"'
+  }
+}
+
+fn is-not-fail [actual]{
+  if (builtin:not-eq $ok $actual) {
+    use str
+    fail 'is-not-fail: actual "'(str:join "\n" [(show $actual)])'"'
+  }
+}
