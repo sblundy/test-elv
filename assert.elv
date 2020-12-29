@@ -55,7 +55,7 @@ fn element-values-match [container @expected]{
     e = $expected[$i]
     value-diffs = [(keys $e | each [k]{
       if (not (builtin:has-key $c $k)) {
-        put '    - '$e
+        put '    - '$k
       } elif (builtin:not-eq $c[$k] $e[$k]) {
         put '    !['$k']:'(repr $e[$k])' != '(repr $c[$k])
       }
