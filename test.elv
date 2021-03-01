@@ -18,7 +18,7 @@ fn print-results [results]{
       passed failed output = (print-results $result[output])
       put $passed $failed [(styled $result[description] bold) (all $output | each [l]{ put '  '$l })]
     } elif (has-key $result 'name') {
-      output = $result[output]
+      local:output = $result[output]
       if (has-key $result error) {
         if (has-key $result[error] content) {
           output = [(all $output) 'Failure: '$result[error][content]]
@@ -31,7 +31,9 @@ fn print-results [results]{
       if (!= 0 (count $output)) {
         output = [(all $output | each [l]{ put '  '(to-string $l) }) '']
       }
-      if $result[failed] {
+      if (not (has-key $result failed)) { #TODO error case
+        put 0 1 [(failed-style $result[name]) (all $output)]
+      } elif $result[failed] {
         put 0 1 [(failed-style $result[name]) (all $output)]
       } else {
         put 1 0 [(success-style $result[name]) (all $output)]

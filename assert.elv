@@ -12,7 +12,7 @@ fn not-equals [expected actual]{
 
 fn len [expected container]{
   if (!= $expected (count $container)) {
-     fail 'len: expected "'(to-string $expected)'" actual "'(to-string (count $container))'"'
+     fail 'len: expected "'(to-string $expected)'" actual "'(to-string (count $container))'":'(repr $container)
   }
 }
 
@@ -44,4 +44,44 @@ fn has-key [container expected-key]{
 fn value-equals [container key expected]{
   if (not (builtin:has-key $container $key)) { fail 'key "'$key'" missing:'(repr $container) }
   if (builtin:not-eq $container[$key] $expected) { fail 'key "'$key'" value: expected "'$expected'" actual "'$container[$key]'"' }
+}
+
+fn element-values-match [container @expected]{
+  if (!= (count $expected) (count $container)) {
+     fail 'element-values-match: expected "'(to-string $expected)'" actual "'(to-string (count $container))'":'(repr $container)
+  }
+  diffs = [(range (count $expected) | each [i]{
+    c = $container[$i]
+    e = $expected[$i]
+    value-diffs = [(keys $e | each [k]{
+      if (not (builtin:has-key $c $k)) {
+        put '    - '$k
+      } elif (builtin:not-eq $c[$k] $e[$k]) {
+        put '    !['$k']:'(repr $e[$k])' != '(repr $c[$k])
+      }
+    })]
+    if (!= 0 (count $value-diffs)) {
+      put '  ['$i']'
+      all $value-diffs
+    }
+  })]
+  if (!= 0 (count $diffs)) {
+    use str
+    lines = ['element-values-match:' (all $diffs)]
+    repr $lines >> test.log
+    fail (str:join "\n" $lines)
+  }
+}
+
+fn is-fail [actual]{
+  if (builtin:eq $ok $actual) {
+    fail 'is-fail: actual "'(to-string $actual)'"'
+  }
+}
+
+fn is-not-fail [actual]{
+  if (builtin:not-eq $ok $actual) {
+    use str
+    fail 'is-not-fail: actual "'(str:join "\n" [(show $actual)])'"'
+  }
 }
